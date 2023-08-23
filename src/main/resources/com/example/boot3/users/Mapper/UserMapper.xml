@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.boot3.users.Mapper.UserMapper">
+    <!--新增员工-->
+    <insert id="userinsert">
+        insert into user(username,name,password,gender,age,email,entrydate,begindate,enddate,status)
+        values (#{username},#{name},#{password},#{gender},#{age},#{email}
+        ,#{entrydate},#{begindate},#{enddate},#{status})
+    </insert>
+    <update id="userUpdate">
+        update user
+        <set>
+            <if test="username != null">username = #{username},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="password != null">password = #{password},</if>
+            <if test="gender != null">gender = #{gender},</if>
+            <if test="age != null">age = #{age},</if>
+            <if test="email != null">email = #{email},</if>
+            <if test="entrydate != null">entrydate = #{entrydate},</if>
+            <if test="begindate != null">begindate = #{begindate},</if>
+            <if test="enddate != null">enddate = #{enddate},</if>
+            <if test="status != null">status = #{status}</if>
+        </set>
+        where id=#{id}
+    </update>
+
+
+    <delete id="userdeleteById">
+        delete from user where id in (-1
+        <foreach open="," collection="ids" item="idtem" separator=",">
+            #{idtem}
+        </foreach>
+        )
+    </delete>
+    <!--   分页查询-->
+    <select id="userselect" resultType="com.example.boot3.users.Entity.User">
+        select *
+        from user
+        <where>
+            <if test="name !=null">
+                name like concat('%',#{name},'%')
+            </if>
+            <if test="gender !=null">
+                and gender =@{gender}
+            </if>
+            <if test="begin !=null and end !=null">
+                and entrydate between #{begin} and #{end}
+            </if>
+        </where>
+        order by id desc
+    </select>
+
+    <select id="selectbyidssafely" resultType="java.util.List">
+        select *
+        from user
+        where id in
+        <foreach collection="newArrayList" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </select>
+    <!--查询(16,17,18 ,19)-->
+    <select id="selectByIds" resultType="com.example.boot3.users.Entity.User">
+        SELECT * FROM user WHERE id in
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id} </foreach>
+    </select>
+
+
+</mapper>
